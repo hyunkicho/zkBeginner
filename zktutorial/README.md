@@ -27,6 +27,8 @@ signal could be written as input and output and it is private
 https://docs.circom.io/circom-language/signals/
 
 ```
+pragma circom 2.0.0;
+
 template Multiplier2 () {  
 
    // Declaration of signals.  
