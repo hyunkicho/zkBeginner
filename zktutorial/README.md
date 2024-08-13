@@ -4,7 +4,6 @@ circum tutorial
 # docs
 https://docs.circom.io/getting-started/installation/#installing-circom
 
-
 install circum and snarkjs
 cirucum is made up of rust so you need to install rust and then install circom
 also you need to install snarkjs
@@ -153,3 +152,57 @@ The Verifier has a view function called verifyProof that returns TRUE if and onl
 snarkjs generatecall
 ```
 you could use this in js library when you make a service with zk
+
+# Poseidon hash
+https://socket.dev/npm/package/poseidon-lite
+
+1. make r1cs , wasm ,sym
+```
+circom poseidon.circom --r1cs --wasm --sym
+```
+
+2. make input
+
+input.json
+```
+{"in" : [1, 2, 3, 4]}
+```
+
+3. make input & witness 
+```
+node generate_witness.js poseidon.wasm input.json witness.wtns
+```
+
+4. make trusted setup (skip ceremoney in this case)
+```
+snarkjs powersoftau prepare phase2 pot12_0000.ptau pot12_final.ptau -v
+```
+
+5. make zkey
+```
+snarkjs groth16 setup poseidon.r1cs pot12_final.ptau poseidon_0000.zkey
+```
+
+6. export zkey
+```
+snarkjs zkey export verificationkey poseidon_0000.zkey verification_key.json
+```
+
+7. generate zk-proof associated to the circuit and the witness
+
+```
+snarkjs groth16 prove poseidon_0000.zkey witness.wtns proof.json public.json
+```
+
+8. generate solidity code that allows verification 
+
+```
+snarkjs zkey export solidityverifier poseidon_0000.zkey poseidon_verifier.sol
+```
+
+9. generatecall
+
+```
+snarkjs generatecall
+```
+
